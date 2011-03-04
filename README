@@ -1,17 +1,14 @@
-Welcome to your Appcelerator Titanium Mobile Project
+Welcome to the ABC's Writer open source project.
 
-This is a blank project.  Start by editing your application's app.js to 
-make your first mobile project using Titanium.
+Currently, ABC's Writer is only supported on iOS 4.2 running on the iPad. 
 
-
+ABC's Writer is licensed under the OSI approved Apache Public License (version 2). Please see the LICENSE file for specific details.
 
 ----------------------------------
-Stuff our legal folk make us say:
-
 Appcelerator, Appcelerator Titanium and associated marks and logos are 
 trademarks of Appcelerator, Inc. 
 
-Titanium is Copyright (c) 2009-2010 by Appcelerator, Inc. All Rights Reserved.
+Titanium is Copyright (c) 2009-2011 by Appcelerator, Inc. All Rights Reserved.
 
 Titanium is licensed under the Apache Public License (Version 2). Please
 see the LICENSE file for the full license.

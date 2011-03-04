@@ -215,7 +215,7 @@ var view = {
      * Shows the home window to the user, setting up the UI if it hasn't been set up before.
      */
     home: function() {
-        alert('This hasn\'t been implemented yet. \n\n Fork the code and make it work.');
+        alert('This hasn\'t been implemented yet. \n\n Fork the code over at: https://github.com/appcelerator-titans/abcsWriter and make it work.');
     },
     /**
      * Shows the paint window to the user, setting up the UI if it hasn't been set up before.
