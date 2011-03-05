@@ -1,10 +1,14 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <ti:app xmlns:ti="http://ti.appcelerator.org">
+    <deployment-targets>
+        <target device="ipad">true</target>
+        <target device="iphone">false</target>
+    </deployment-targets>
 <id>com.appcelerator.apps.abcswriter</id>
 <name>ABC's Writer</name>
 <version>1.0</version>
 <publisher>Appcelerator</publisher>
-<url>www.appcelerator.com</url>
+<url>http://www.appcelerator.com</url>
 <description>Trace letters with this interactive drawing app.</description>
 <copyright>2011 by Appcelerator</copyright>
 <icon>default_app_logo.png</icon>

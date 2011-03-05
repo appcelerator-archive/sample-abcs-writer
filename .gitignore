@@ -1,3 +1,5 @@
 build/iphone/*
 modules/iphone/*
 .DS_Store
+.project
+.settings
