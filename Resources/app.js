@@ -14,7 +14,7 @@ includeRJSS('Styles/Common.rjss');
  * Tell Titanium what modules to include and define our global UI object.
  */
 Titanium.Painter = require('ti.paint');
-// this next line lets us do new Canvas() instead of Titanium.Painter.createView() -- the end result is identical
+// this next line lets us do "new Painter()" instead of Titanium.Painter.createView() -- the end result is identical
 redux.fn.addNaturalConstructor(this, Titanium.Painter, 'View', 'Painter');
 // and now make a ui object for us to store elements in so the event handlers can get at them
 var ui = {
