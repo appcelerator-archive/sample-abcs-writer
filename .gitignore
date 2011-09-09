@@ -3,3 +3,4 @@ modules/iphone/*
 .DS_Store
 .project
 .settings
+build.log

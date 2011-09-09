@@ -2,30 +2,35 @@
 <ti:app xmlns:ti="http://ti.appcelerator.org">
     <deployment-targets>
         <target device="ipad">true</target>
-        <target device="iphone">false</target>
+        <target device="iphone">true</target>
+        <target device="android">true</target>
     </deployment-targets>
-<id>com.appcelerator.apps.abcswriter</id>
-<name>ABC's Writer</name>
-<version>1.0</version>
-<publisher>Appcelerator</publisher>
-<url>http://www.appcelerator.com</url>
-<description>Trace letters with this interactive drawing app.</description>
-<copyright>2011 by Appcelerator</copyright>
-<icon>default_app_logo.png</icon>
+    <id>com.appcelerator.apps.abcswriter</id>
+    <name>ABC's Writer</name>
+    <version>1.0</version>
+    <publisher>Appcelerator</publisher>
+    <url>http://www.appcelerator.com</url>
+    <description>Trace letters with this interactive drawing app.</description>
+    <copyright>2011 by Appcelerator</copyright>
+    <icon>default_app_logo.png</icon>
     <persistent-wifi>false</persistent-wifi>
     <prerendered-icon>false</prerendered-icon>
     <statusbar-style>default</statusbar-style>
-    <statusbar-hidden>false</statusbar-hidden>
-    <fullscreen>false</fullscreen>
-    <navbar-hidden>false</navbar-hidden>
+    <statusbar-hidden>true</statusbar-hidden>
+    <fullscreen>true</fullscreen>
+    <navbar-hidden>true</navbar-hidden>
     <analytics>true</analytics>
     <guid>af3b196e-47f9-40bd-8a06-4e1a44b228bf</guid>
     <iphone>
         <orientations device="iphone">
+            <orientation>Ti.UI.PORTRAIT</orientation>
+            <orientation>Ti.UI.UPSIDE_PORTRAIT</orientation>
             <orientation>Ti.UI.LANDSCAPE_LEFT</orientation>
             <orientation>Ti.UI.LANDSCAPE_RIGHT</orientation>
         </orientations>
         <orientations device="ipad">
+            <orientation>Ti.UI.PORTRAIT</orientation>
+            <orientation>Ti.UI.UPSIDE_PORTRAIT</orientation>
             <orientation>Ti.UI.LANDSCAPE_LEFT</orientation>
             <orientation>Ti.UI.LANDSCAPE_RIGHT</orientation>
         </orientations>
@@ -33,6 +38,7 @@
     <android xmlns:android="http://schemas.android.com/apk/res/android">
     </android>
     <modules>
-        <module version="1.0">ti.paint</module>
+        <module version="1.0" platform="iphone">ti.paint</module>
+        <module version="1.0" platform="android">ti.paint</module>
     </modules>
 </ti:app>
