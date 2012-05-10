@@ -7,12 +7,12 @@
     </deployment-targets>
     <id>com.appcelerator.apps.abcswriter</id>
     <name>ABC's Writer</name>
-    <version>1.0</version>
+    <version>1.1</version>
     <publisher>Appcelerator</publisher>
     <url>http://www.appcelerator.com</url>
     <description>Trace letters with this interactive drawing app.</description>
     <copyright>2011 by Appcelerator</copyright>
-    <icon>default_app_logo.png</icon>
+    <icon>appicon.png</icon>
     <persistent-wifi>false</persistent-wifi>
     <prerendered-icon>false</prerendered-icon>
     <statusbar-style>default</statusbar-style>
@@ -21,6 +21,7 @@
     <navbar-hidden>true</navbar-hidden>
     <analytics>true</analytics>
     <guid>af3b196e-47f9-40bd-8a06-4e1a44b228bf</guid>
+    <property name="ti.ui.defaultunit">dp</property>
     <iphone>
         <orientations device="iphone">
             <orientation>Ti.UI.PORTRAIT</orientation>
@@ -38,7 +39,7 @@
     <android xmlns:android="http://schemas.android.com/apk/res/android">
     </android>
     <modules>
-        <module version="1.0" platform="iphone">ti.paint</module>
-        <module version="1.0" platform="android">ti.paint</module>
+        <module version="1.3" platform="iphone">ti.paint</module>
+        <module version="1.1" platform="android">ti.paint</module>
     </modules>
 </ti:app>

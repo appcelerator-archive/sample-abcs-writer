@@ -3,7 +3,7 @@
  */
 var topBar = Ti.UI.createView({
     top: 0, right: 0, left: 0,
-    height: 44 + u,
+    height: 44,
     backgroundImage: 'Images/Tile-Top.png'
 });
 win.add(topBar);
@@ -12,8 +12,8 @@ win.add(topBar);
  * Create a save button. This will save the paintView to the user's photo gallery.
  */
 var save = Ti.UI.createButton({
-    width: 56 + u, height: 31 + u,
-    left: 5 + u, top: 7 + u,
+    width: 56, height: 31,
+    left: 5, top: 7,
     backgroundImage: 'Images/Buttons/Save.png'
 });
 function saveSuccess() {
@@ -29,7 +29,7 @@ function saveFailure(err) {
     }).show();
 }
 
-save.addEventListener('click', function() {
+save.addEventListener('click', function () {
     if (Ti.Android) {
         try {
             var fileName = 'Painting-' + new Date().getTime() + '.png';
@@ -56,20 +56,20 @@ topBar.add(save);
  * Create a color button.
  */
 var colorSwatch = Ti.UI.createView({
-    width: 30 + u, height: 26 + u,
-    left: 68 + u, top: 9 + u,
+    width: 30, height: 26,
+    left: 68, top: 9,
     backgroundColor: paintView.strokeColor
 });
 topBar.add(colorSwatch);
 var color = Ti.UI.createButton({
-    width: 34 + u, height: 30 + u,
-    left: 66 + u, top: 7 + u,
+    width: 34, height: 30,
+    left: 66, top: 7,
     backgroundImage: 'Images/Buttons/Insert-Off.png'
 });
-color.addEventListener('click', function() {
+color.addEventListener('click', function () {
     showColorPicker({
         initial: paintView.strokeColor,
-        success: function(color) {
+        success: function (color) {
             paintView.strokeColor = colorSwatch.backgroundColor = color;
         }
     });
@@ -81,15 +81,15 @@ topBar.add(color);
  */
 var sizeSlider = Ti.UI.createSlider({
     min: 0.25, max: 50, value: paintView.strokeWidth,
-    left: 105 + u, right: 105 + u, top: 10 + u,
-    height: 'auto'
+    left: 105, right: 105, top: 10,
+    height: Ti.UI.SIZE
 });
 topBar.add(sizeSlider);
-sizeSlider.addEventListener('change', function(e) {
+sizeSlider.addEventListener('change', function (e) {
     try {
         paintView.strokeWidth = e.value;
     }
-    catch(err) {
+    catch (err) {
     }
 });
 
@@ -97,22 +97,24 @@ sizeSlider.addEventListener('change', function(e) {
  * Create a erase mode button.
  */
 topBar.add(Ti.UI.createView({
-    width: 30 + u, height: 26 + u,
-    right: 68 + u, top: 9 + u,
+    width: 30, height: 26,
+    right: 68, top: 9,
     backgroundColor: '#fff'
 }));
 var eraseMode = Ti.UI.createButton({
-    width: 34 + u, height: 30 + u,
-    right: 66 + u, top: 7 + u,
-    backgroundImage: 'Images/Buttons/Insert-Off.png'
+    width: 34, height: 30,
+    right: 66, top: 7,
+    backgroundImage: 'Images/Buttons/Insert-Off.png',
+    opacity: 0.5
 });
 eraseMode.add(Ti.UI.createImageView({
-    width: 23 + u, height: 22 + u,
-    right: 5 + u, top: 4 + u,
+    width: 23, height: 22,
+    right: 5, top: 4,
     image: 'Images/Buttons/Eraser.png'
 }));
-eraseMode.addEventListener('click', function() {
+eraseMode.addEventListener('click', function () {
     paintView.eraseMode = !paintView.eraseMode;
+    eraseMode.opacity = paintView.eraseMode ? 1 : 0.5;
     eraseMode.backgroundImage = 'Images/Buttons/Insert-' + (paintView.eraseMode ? 'On' : 'Off') + '.png';
 });
 topBar.add(eraseMode);
@@ -121,19 +123,19 @@ topBar.add(eraseMode);
  * Create a clear button.
  */
 var clear = Ti.UI.createButton({
-    width: 56 + u, height: 31 + u,
-    right: 5 + u, top: 7 + u,
+    width: 56, height: 31,
+    right: 5, top: 7,
     backgroundImage: 'Images/Buttons/Clear.png'
 });
-clear.addEventListener('click', function() {
+clear.addEventListener('click', function () {
     var confirm = Ti.UI.createAlertDialog({
         title: 'Clear Drawing',
         message: 'Are you sure?',
-        buttonNames: ['Yes','No'],
+        buttonNames: ['Yes', 'No'],
         cancel: 1
     });
     confirm.show();
-    confirm.addEventListener('click', function(evt) {
+    confirm.addEventListener('click', function (evt) {
         if (evt.index != confirm.cancel) {
             paintView.clear();
         }

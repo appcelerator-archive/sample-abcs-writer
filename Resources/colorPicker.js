@@ -12,18 +12,18 @@ function showColorPicker(args) {
      * palette, we will fade the primary color of the lower mix between these values.
      */
     var mainColors = [
-        [255,0,0],
-        [255,0,255],
-        [0,0,255],
-        [0,255,255],
-        [0,255,0],
-        [255,255,0],
-        [255,0,0]
+        [255, 0, 0],
+        [255, 0, 255],
+        [0, 0, 255],
+        [0, 255, 255],
+        [0, 255, 0],
+        [255, 255, 0],
+        [255, 0, 0]
     ];
     var mainColor = Ti.UI.createView({
         backgroundImage: 'Images/Tile-Colors.png',
         top: 0, right: 0, left: 0,
-        height: 40 + u
+        height: 40
     });
 
     function updateColors(evt) {
@@ -67,7 +67,7 @@ function showColorPicker(args) {
      */
     var colorMix = Ti.UI.createView({
         backgroundColor: args.initial,
-        top: 40 + u, right: 0, bottom: 40 + u, left: 0
+        top: 40, right: 0, bottom: 40, left: 0
     });
     overlay.add(colorMix);
 
@@ -77,7 +77,7 @@ function showColorPicker(args) {
      */
     var whiteGradient = Ti.UI.createView({
         backgroundImage: 'Images/Tile-White.png',
-        top: 40 + u, right: 0, bottom: 40 + u, left: 0
+        top: 40, right: 0, bottom: 40, left: 0
     });
     overlay.add(whiteGradient);
 
@@ -86,13 +86,13 @@ function showColorPicker(args) {
      */
     var blackGradient = Ti.UI.createView({
         backgroundImage: 'Images/Tile-Black.png',
-        top: 40 + u, right: 0, bottom: 40 + u, left: 0
+        top: 40, right: 0, bottom: 40, left: 0
     });
     /**
      * Because the black gradient is top most, we're going to attach our click event to it. We'll use it to figure out
      * when the user clicks on a color.
      */
-    blackGradient.addEventListener('click', function(evt) {
+    blackGradient.addEventListener('click', function (evt) {
         // The algorithm we will use here is very similar to what we used above in the "updateColors" function, so I
         // won't provide a step-by-step.
         var whiteRatio = 1 - (evt.x / evt.source.size.width);
@@ -137,9 +137,9 @@ function showColorPicker(args) {
         title: 'Cancel',
         right: 0, bottom: 0, left: 0,
         backgroundColor: '#777', color: '#222', style: 0,
-        height: 40 + u
+        height: 40
     });
-    close.addEventListener('click', function() {
+    close.addEventListener('click', function () {
         win.remove(overlay);
     });
     overlay.add(close);
