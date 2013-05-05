@@ -142,18 +142,7 @@ function addToView(win, paintView) {
 		backgroundImage: '/Images/Buttons/Clear.png'
 	});
 	clear.addEventListener('click', function() {
-		var confirm = Ti.UI.createAlertDialog({
-			title: 'Clear Drawing',
-			message: 'Are you sure?',
-			buttonNames: ['Yes', 'No'],
-			cancel: 1
-		});
-		confirm.show();
-		confirm.addEventListener('click', function(evt) {
-			if (evt.index != confirm.cancel) {
-				paintView.clear();
-			}
-		});
+		paintView.clear();
 	});
 	topBar.add(clear);
 }
