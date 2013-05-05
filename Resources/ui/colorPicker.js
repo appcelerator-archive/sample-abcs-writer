@@ -1,11 +1,17 @@
+/*
+ Public API.
+ */
+exports.show = show;
+
 /**
  * Shows a really simple color picker to the user.
  * @param args
  */
-function showColorPicker(args) {
-	var overlay = Ti.UI.createView({
-		backgroundColor: '#fff'
-	});
+function show(args) {
+	var win = args.win,
+		overlay = Ti.UI.createView({
+			backgroundColor: '#fff'
+		});
 
 	/**
 	 * Our images show 7 main colors to the user, fading between each. When the user drags on the top "mainColor"
@@ -21,7 +27,7 @@ function showColorPicker(args) {
 		[255, 0, 0]
 	];
 	var mainColor = Ti.UI.createView({
-		backgroundImage: 'Images/Tile-Colors.png',
+		backgroundImage: '/Images/Tile-Colors.png',
 		top: 0, right: 0, left: 0,
 		height: 40
 	});
@@ -76,7 +82,7 @@ function showColorPicker(args) {
 	 * to 0% white.
 	 */
 	var whiteGradient = Ti.UI.createView({
-		backgroundImage: 'Images/Tile-White.png',
+		backgroundImage: '/Images/Tile-White.png',
 		top: 40, right: 0, bottom: 40, left: 0
 	});
 	overlay.add(whiteGradient);
@@ -85,7 +91,7 @@ function showColorPicker(args) {
 	 * Now here is the same thing as the white gradient, except it's black.
 	 */
 	var blackGradient = Ti.UI.createView({
-		backgroundImage: 'Images/Tile-Black.png',
+		backgroundImage: '/Images/Tile-Black.png',
 		top: 40, right: 0, bottom: 40, left: 0
 	});
 	/**
