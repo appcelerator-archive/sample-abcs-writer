@@ -7,11 +7,11 @@
     </deployment-targets>
     <id>com.dawson.abcswriter</id>
     <name>ABC's Writer</name>
-    <version>1.1</version>
+    <version>1.2.0</version>
     <publisher>Appcelerator</publisher>
     <url>http://www.appcelerator.com</url>
     <description>Trace letters with this interactive drawing app.</description>
-    <copyright>2011 by Appcelerator</copyright>
+    <copyright>2013 by Appcelerator, Inc.</copyright>
     <icon>appicon.png</icon>
     <persistent-wifi>false</persistent-wifi>
     <prerendered-icon>false</prerendered-icon>
