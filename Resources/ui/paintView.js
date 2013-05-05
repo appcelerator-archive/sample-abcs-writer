@@ -110,7 +110,7 @@ function swapCleared() {
 
 function createView() {
 	var container = Ti.UI.createScrollView({
-		top: 44, right: 0, bottom: 38, left: 0,
+		top: 82, right: 0, bottom: 0, left: 0,
 		verticalBounce: false,
 		disableBounce: true
 	});

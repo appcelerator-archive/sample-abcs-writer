@@ -15,12 +15,12 @@ exports.addToView = addToView;
  */
 function addToView(win) {
 	win.add(Ti.UI.createView({
-		right: 0, bottom: 0, left: 0,
+		top: 44, right: 0, left: 0,
 		height: 38,
 		backgroundImage: '/Images/Tile-Bottom-Off.png'
 	}));
 	var bottomBar = Ti.UI.createScrollView({
-		right: 0, bottom: 0, left: 0,
+		top: 44, right: 0, left: 0,
 		height: 38,
 		contentWidth: 'auto',
 		scrollType: 'horizontal',

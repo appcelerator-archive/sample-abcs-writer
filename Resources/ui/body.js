@@ -11,14 +11,19 @@ exports.addToView = addToView;
  */
 function addToView(win) {
 
+	var container = Ti.UI.createView({
+		top: 82, right: 0, bottom: 0, left: 0
+	});
+	win.add(container);
+
 	var guideSize = U.ipad ? {
 		width: 600, height: 375,
 		topOffset: 96,
-		barHeight: 280, barBottom: 70
+		barHeight: 280
 	} : {
 		width: 320, height: 200,
 		topOffset: 52,
-		barHeight: 150, barBottom: 35
+		barHeight: 150
 	};
 
 	/**
@@ -59,7 +64,7 @@ function addToView(win) {
 		backgroundColor: '#000'
 	}));
 
-	win.add(guides);
+	container.add(guides);
 
 	var letterContainer = Ti.UI.createView({
 		width: guideSize.width, height: guideSize.height + guideSize.topOffset
@@ -69,7 +74,7 @@ function addToView(win) {
 		width: guideSize.width, height: guideSize.height
 	});
 	letterContainer.add(letterDisplay);
-	win.add(letterContainer);
+	container.add(letterContainer);
 
 	E.addEventListener('switchToLetter', switchToLetter);
 
