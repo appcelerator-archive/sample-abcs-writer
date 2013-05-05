@@ -5,10 +5,10 @@ var U = require('lib/utils');
 
 var win = Ti.UI.createWindow({ backgroundImage: U.ipad ? '/Images/Background-72.jpg' : '/Images/Background.jpg' });
 
-var paintView = require('ui/paintView').createView();
-require('ui/top').addToView(win, paintView);
+require('ui/paintView').init();
+require('ui/top').addToView(win);
 require('ui/body').addToView(win);
-win.add(paintView);
+require('ui/paintView').addToView(win);
 require('ui/bottom').addToView(win);
 
 win.open();
