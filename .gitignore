@@ -6,3 +6,4 @@ modules/iphone/*
 build.log
 build/*
 modules
+/.idea/

@@ -5,7 +5,7 @@
         <target device="iphone">true</target>
         <target device="android">true</target>
     </deployment-targets>
-    <id>com.appcelerator.apps.abcswriter</id>
+    <id>com.dawson.abcswriter</id>
     <name>ABC's Writer</name>
     <version>1.1</version>
     <publisher>Appcelerator</publisher>

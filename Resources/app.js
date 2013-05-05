@@ -4,16 +4,17 @@
 var Paint = require('ti.paint');
 
 var img = '';
-if (Ti.Platform.osname == 'ipad')
-    img = '~ipad';
+if (Ti.Platform.osname == 'ipad') {
+	img = '-72';
+}
 
 var win = Ti.UI.createWindow({
-    backgroundImage: 'Images/Background' + img + '.jpg'
+	backgroundImage: 'Images/Background' + img + '.jpg'
 });
 var paintView = Paint.createPaintView({
-    top: 44, right: 0, bottom: 38, left: 0,
-    strokeColor: '#00ff00', strokeWidth: 10,
-    eraseMode: false
+	top: 44, right: 0, bottom: 38, left: 0,
+	strokeColor: '#00ff00', strokeWidth: 10,
+	eraseMode: false
 });
 
 Ti.include('colorPicker.js');
