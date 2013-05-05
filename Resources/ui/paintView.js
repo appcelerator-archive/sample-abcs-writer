@@ -1,5 +1,6 @@
 var Paint = require('ti.paint'),
-	E = require('lib/events');
+	E = require('lib/events'),
+	S = require('data/settings');
 
 var win, paintWrapper, clearedPaintWrapper;
 
@@ -8,6 +9,7 @@ var win, paintWrapper, clearedPaintWrapper;
  */
 exports.init = init;
 exports.addToView = addToView;
+exports.eraseMode = eraseMode;
 exports.strokeColor = strokeColor;
 exports.strokeWidth = strokeWidth;
 
@@ -19,8 +21,6 @@ function init() {
 
 	E
 		.addEventListener('paint:save', save)
-		.addEventListener('paint:erase-on', eraseOn)
-		.addEventListener('paint:erase-off', eraseOff)
 		.addEventListener('paint:clear', clear)
 		.addEventListener('paint:swap-cleared', swapCleared)
 	;
@@ -30,6 +30,18 @@ function addToView(_win) {
 	win = _win;
 	paintWrapper.container.addEventListener('touchmove', paintLayerTouchMoveListener);
 	win.add(paintWrapper.container);
+}
+
+function eraseMode(val) {
+	if (!paintWrapper) {
+		return;
+	}
+	if (val === undefined) {
+		return paintWrapper.view.eraseMode;
+	}
+	else {
+		return paintWrapper.view.eraseMode = val;
+	}
 }
 
 function strokeColor(val) {
@@ -83,19 +95,12 @@ function save() {
 	}
 }
 
-function eraseOn() {
-	paintWrapper.view.eraseMode = true;
-}
-
-function eraseOff() {
-	paintWrapper.view.eraseMode = false;
-}
-
 function clear() {
 	win.remove(paintWrapper.container);
 	clearedPaintWrapper = paintWrapper;
 	paintWrapper = createView();
 	paintWrapper.container.addEventListener('touchmove', paintLayerTouchMoveListener);
+	persistPaintProperties(clearedPaintWrapper.view, paintWrapper.view);
 	win.add(paintWrapper.container);
 }
 
@@ -105,6 +110,7 @@ function swapCleared() {
 	paintWrapper = clearedPaintWrapper;
 	clearedPaintWrapper = temp;
 	paintWrapper.container.addEventListener('touchmove', paintLayerTouchMoveListener);
+	persistPaintProperties(clearedPaintWrapper.view, paintWrapper.view);
 	win.add(paintWrapper.container);
 }
 
@@ -115,11 +121,17 @@ function createView() {
 		disableBounce: true
 	});
 	var view = Paint.createPaintView({
-		strokeColor: '#00ff00', strokeWidth: 10,
+		strokeColor: S.defaultPenColor(), strokeWidth: S.defaultPenWidth(),
 		eraseMode: false
 	});
 	container.add(view);
 	return { container: container, view: view };
+}
+
+function persistPaintProperties(from, to) {
+	to.strokeColor = from.strokeColor;
+	to.strokeWidth = from.strokeWidth;
+	to.eraseMode = from.eraseMode;
 }
 
 function paintLayerTouchMoveListener() {

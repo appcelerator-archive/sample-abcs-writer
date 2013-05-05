@@ -1,6 +1,8 @@
 var ColorPicker = require('./colorPicker'),
 	PaintView = require('./paintView'),
-	E = require('lib/events');
+	A = require('lib/animations'),
+	E = require('lib/events'),
+	S = require('data/settings');
 
 /*
  Public API.
@@ -32,75 +34,94 @@ function addToView(win) {
 	save.addEventListener('click', E.curryFireEvent('paint:save'));
 	topBar.add(save);
 
-	/**
-	 * Create a color button.
+	/*
+	 Pen Stroke.
 	 */
-	var colorSwatch = Ti.UI.createView({
-		width: 30, height: 26,
-		left: 68, top: 9,
-		backgroundColor: PaintView.strokeColor()
+	var pen = Ti.UI.createView({
+		width: 75,
+		left: 66,
+		top: 0
 	});
-	topBar.add(colorSwatch);
-	var color = Ti.UI.createButton({
-		width: 34, height: 30,
-		left: 66, top: 7,
-		backgroundImage: '/Images/Buttons/Insert-Off.png'
-	});
-	color.addEventListener('click', function() {
-		ColorPicker.show({
-			win: win,
-			initial: colorSwatch.backgroundColor,
-			success: function(color) {
-				PaintView.strokeColor(colorSwatch.backgroundColor = color);
-			}
-		});
-	});
-	topBar.add(color);
-
-	/**
-	 * Create a size slider.
-	 */
-	var sizeSlider = Ti.UI.createSlider({
-		min: 0.25, max: 50, value: PaintView.strokeWidth(),
-		left: 105, right: 105, top: 10,
-		height: Ti.UI.SIZE
-	});
-	topBar.add(sizeSlider);
-	sizeSlider.addEventListener('change', function(e) {
-		try {
-			PaintView.strokeWidth(e.value);
-		}
-		catch (err) {
+	pen.addEventListener('click', function(evt) {
+		var makeVisible = colorPicker.isVisible = !colorPicker.isVisible;
+		colorPicker.touchEnabled = makeVisible;
+		A.fade(colorPicker, makeVisible ? 1 : 0);
+		A.fade(penHighlight, makeVisible ? 1 : 0);
+		if (makeVisible && PaintView.eraseMode()) {
+			toggleEraser();
 		}
 	});
-
-	/**
-	 * Create a erase mode button.
-	 */
-	topBar.add(Ti.UI.createView({
-		width: 30, height: 26,
-		right: 68, top: 9,
-		backgroundColor: '#fff'
-	}));
-	var eraseModeOn = false,
-		eraseMode = Ti.UI.createButton({
-			width: 34, height: 30,
-			right: 66, top: 7,
-			backgroundImage: '/Images/Buttons/Insert-Off.png',
-			opacity: 0.5
-		});
-	eraseMode.add(Ti.UI.createImageView({
-		width: 23, height: 22,
-		right: 5, top: 4,
-		image: '/Images/Buttons/Eraser.png'
-	}));
-	eraseMode.addEventListener('click', function() {
-		eraseModeOn = !eraseModeOn;
-		eraseMode.opacity = eraseModeOn ? 1 : 0.5;
-		eraseMode.backgroundImage = '/Images/Buttons/Insert-' + (eraseModeOn ? 'On' : 'Off') + '.png';
-		E.fireEvent('paint:erase-' + (eraseModeOn ? 'on' : 'off'));
+	var penStroke = Ti.UI.createView({
+		width: S.defaultPenWidth(), height: S.defaultPenWidth(),
+		borderRadius: S.defaultPenWidth() / 2,
+		backgroundColor: S.defaultPenColor(),
+		touchEnabled: false
 	});
-	topBar.add(eraseMode);
+	var penStrokeShadow = Ti.UI.createView({
+		width: S.defaultPenWidth(), height: S.defaultPenWidth(),
+		center: { x: 37, y: 23 },
+		borderRadius: S.defaultPenWidth() / 2,
+		backgroundColor: '#000',
+		opacity: 0.75,
+		touchEnabled: false
+	});
+	var penHighlight = Ti.UI.createView({
+		backgroundImage: '/Images/Tile-Bottom-Off.png',
+		opacity: 0,
+		touchEnabled: false
+	});
+	pen.add(penHighlight);
+	pen.add(penStrokeShadow);
+	pen.add(penStroke);
+	topBar.add(pen);
+
+	/*
+	 Eraser.
+	 */
+	var eraser = Ti.UI.createView({
+		width: 73,
+		left: 141,
+		top: 0
+	});
+	eraser.addEventListener('click', toggleEraser);
+	var eraserHighlight = Ti.UI.createView({
+		backgroundImage: '/Images/Tile-Bottom-Off.png',
+		opacity: 0,
+		touchEnabled: false
+	});
+	eraser.add(eraserHighlight);
+	eraser.add(Ti.UI.createView({
+		backgroundImage: '/Images/eraser.png',
+		width: 38, height: 38,
+		touchEnabled: false
+	}));
+	topBar.add(eraser);
+
+	var flashEraserIntervalID, stopFlash;
+
+	function toggleEraser() {
+		PaintView.eraseMode(!PaintView.eraseMode());
+		if (PaintView.eraseMode()) {
+			A.fade(eraserHighlight, 1);
+			flashEraserIntervalID = setInterval(flashEraser, 1000);
+		}
+		else {
+			clearEraserFlash();
+		}
+	}
+
+	function flashEraser() {
+		stopFlash = A.flash(eraserHighlight, undefined, 0.5, 1);
+	}
+
+	function clearEraserFlash() {
+		if (flashEraserIntervalID) {
+			clearInterval(flashEraserIntervalID);
+			stopFlash && stopFlash();
+			A.fade(eraserHighlight, 0);
+			flashEraserIntervalID = null;
+		}
+	}
 
 	/**
 	 * Create a clear button.
@@ -131,4 +152,8 @@ function addToView(win) {
 		clear.opacity = 1;
 	});
 
+	var colorPicker = ColorPicker.createView({
+		top: 76
+	}, PaintView, penStroke, penStrokeShadow);
+	win.add(colorPicker);
 }

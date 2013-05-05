@@ -1,154 +1,225 @@
-/*
- Public API.
- */
-exports.show = show;
+var U = require('lib/utils'),
+	A = require('lib/animations'),
+	S = require('data/settings');
 
-/**
- * Shows a really simple color picker to the user.
- * @param args
- */
-function show(args) {
-	var win = args.win,
-		overlay = Ti.UI.createView({
-			backgroundColor: '#fff'
-		});
+var paintMin = 1, paintMax = 50;
+var dragMin = 15, dragMax = 220;
+var colorDragMin = 75, colorDragMax = 287;
 
-	/**
-	 * Our images show 7 main colors to the user, fading between each. When the user drags on the top "mainColor"
-	 * palette, we will fade the primary color of the lower mix between these values.
+var hues = [
+	[255, 0, 0],
+	[255, 0, 255],
+	[0, 0, 255],
+	[0, 255, 255],
+	[0, 255, 0],
+	[255, 255, 0],
+	[255, 0, 0]
+];
+
+exports.createView = function(args, paintView, penDot, penDotShadow, listener) {
+	var pickerMode;
+
+	var strokeWeight = S.defaultPenWidth(),
+		strokeColor = S.defaultPenColor(),
+		defaultHueColor = S.defaultPenHueColor(),
+		lastHueColor = S.defaultPenHueColor(),
+		lastHueRatio = S.defaultPenStrokeHueRatio(),
+		lastStrokeRatioX = S.defaultPenStrokeRatioX(),
+		lastStrokeRatioY = S.defaultPenStrokeRatioY();
+	/*
+	 Color Picker.
 	 */
-	var mainColors = [
-		[255, 0, 0],
-		[255, 0, 255],
-		[0, 0, 255],
-		[0, 255, 255],
-		[0, 255, 0],
-		[255, 255, 0],
-		[255, 0, 0]
-	];
-	var mainColor = Ti.UI.createView({
-		backgroundImage: '/Images/Tile-Colors.png',
-		top: 0, right: 0, left: 0,
-		height: 40
+	var colorPicker = Ti.UI.createView(U.def(args, {
+		width: 353, height: 259,
+		touchEnabled: false,
+		opacity: 0,
+		zIndex: 2
+	}));
+	var colorFill = Ti.UI.createView({
+		backgroundColor: defaultHueColor,
+		top: 20, right: 64, bottom: 20, left: 70,
+		borderRadius: 3
 	});
+	colorPicker.add(colorFill);
+	colorPicker.add(Ti.UI.createView({
+		backgroundImage: '/Images/colorPicker.png'
+	}));
 
-	function updateColors(evt) {
-		// Figure out how far along they clicked
-		var ratio = evt.x / evt.source.size.width;
-		// Scale this to be an index in our mainColors array
-		var scaledRatio = ratio * (mainColors.length - 1);
-		// Floor it so that we have a real integer to work with as an index accessor
-		var f = parseInt(Math.floor(scaledRatio), 10);
-		// Grab the fractional component of our original scaled ratio.
-		var percent = scaledRatio - f;
-		// We'll store our new faded color in this variable. But we have to put it together piece by piece first!
-		var newColor = 0;
-		// We will calculate the 3 parts of the color (red, green, and blue) in three different iterations below...
-		for (var i = 0; i < 3; i++) {
-			// Now, using the index we figured out earlier, calculate the faded value between the two pure colors
-			// There's two math equations going on here:
-			// 1) To fade between a and b by a ratio of r: a-(((a-b)*r)
-			// 2) Next, to take our 0-255 value to the proper component of a HEX color, perform a bitwise shift 16, 8,
-			//    or 0 digits
-			newColor += mainColors[f][i] - ((mainColors[f][i] - mainColors[(f + 1)][i]) * percent) << (2 - i) * 8;
-		}
-		// By this point, we figured out our color! As an integer... so let's turn it to its HEX value!
-		var color = newColor.toString(16);
-		// And then let's pad the left of it with 0s...
-		for (var j = color.length; j < 6; j++) {
-			color = '0' + color;
-		}
-		// And shove it in to the color mixers background color!
-		colorMix.backgroundColor = '#' + color;
-		// That wasn't so bad, now was it? (I may have cried when I finished programming this. MAY HAVE.)
+	var handles = {
+		size: Ti.UI.createView({
+			backgroundImage: '/Images/handle.png',
+			width: 25, height: 25,
+			left: 25,
+			top: 0,
+			touchEnabled: false
+		}),
+		color: Ti.UI.createView({
+			backgroundImage: '/Images/handle.png',
+			width: 25, height: 25,
+			left: 150,
+			top: 0,
+			touchEnabled: false
+		}),
+		hue: Ti.UI.createView({
+			backgroundImage: '/Images/handle.png',
+			width: 25, height: 25,
+			left: 305,
+			top: 0,
+			touchEnabled: false
+		})
+	};
+
+	function updateHandleTop(id, percent) {
+		handles[id].top = dragMin + (1 - percent) * (dragMax - dragMin);
 	}
 
-	mainColor.addEventListener('click', updateColors);
-	mainColor.addEventListener('touchmove', updateColors);
-	overlay.add(mainColor);
+	function updateHandleTopLeft(id, percentX, percentY) {
+		handles[id].applyProperties({
+			top: (dragMin + percentY * (dragMax - dragMin)),
+			left: (colorDragMin + (1 - percentX) * (colorDragMax - colorDragMin - 8)) - 10
+		});
+	}
 
-	/**
-	 * This color mix is our base color. We'll put a white and black gradient above it to give the user
-	 * lots of color options.
-	 */
-	var colorMix = Ti.UI.createView({
-		backgroundColor: args.initial,
-		top: 40, right: 0, bottom: 40, left: 0
-	});
-	overlay.add(colorMix);
+	updateHandleTop('size', strokeWeight / paintMax);
 
-	/**
-	 * As promised, here's our white gradient! It is directly over the color mix, but it fades from 100% white
-	 * to 0% white.
-	 */
-	var whiteGradient = Ti.UI.createView({
-		backgroundImage: '/Images/Tile-White.png',
-		top: 40, right: 0, bottom: 40, left: 0
-	});
-	overlay.add(whiteGradient);
-
-	/**
-	 * Now here is the same thing as the white gradient, except it's black.
-	 */
-	var blackGradient = Ti.UI.createView({
-		backgroundImage: '/Images/Tile-Black.png',
-		top: 40, right: 0, bottom: 40, left: 0
-	});
-	/**
-	 * Because the black gradient is top most, we're going to attach our click event to it. We'll use it to figure out
-	 * when the user clicks on a color.
-	 */
-	blackGradient.addEventListener('click', function(evt) {
-		// The algorithm we will use here is very similar to what we used above in the "updateColors" function, so I
-		// won't provide a step-by-step.
-		var whiteRatio = 1 - (evt.x / evt.source.size.width);
-		var blackRatio = evt.y / evt.source.size.height;
-		var base = colorMix.backgroundColor.substring(1);
-		var splitColor = [];
-		if (base.length == 3) {
-			splitColor = [
-				parseInt(base[0] + base[0], 16),
-				parseInt(base[1] + base[1], 16),
-				parseInt(base[2] + base[2], 16)
-			];
+	function pickerStart(evt) {
+		if (evt.x < 62) {
+			pickerMode = 'size';
+		}
+		else if (evt.x < 295) {
+			pickerMode = 'color';
 		}
 		else {
-			splitColor = [
-				parseInt(base[0] + base[1], 16),
-				parseInt(base[2] + base[3], 16),
-				parseInt(base[4] + base[5], 16)
-			];
+			pickerMode = 'hue';
 		}
-		// First, apply the white ratio to it. This will fade the rgb components closer to white.
-		for (var i = 0; i < 3; i++) {
-			splitColor[i] = 255 - ((255 - splitColor[i]) * (1 - whiteRatio));
-		}
-		// Now apply the black ratio, and merge it in to an actual integer.
-		var newColor = 0;
-		for (var j = 0; j < 3; j++) {
-			newColor += 0 - ((0 - splitColor[j]) * (1 - blackRatio)) << (2 - j) * 8;
-		}
-		// By this point, we figured out our color! As an integer... so let's turn it to its HEX value!
-		var color = newColor.toString(16);
-		// And then let's pad the left of it with 0s...
-		for (var k = color.length; k < 6; k++) {
-			color = '0' + color;
-		}
-		win.remove(overlay);
-		args.success('#' + color);
-	});
-	overlay.add(blackGradient);
+	}
 
-	var close = Ti.UI.createButton({
-		title: 'Cancel',
-		right: 0, bottom: 0, left: 0,
-		backgroundColor: '#777', color: '#222', style: 0,
-		height: 40
-	});
-	close.addEventListener('click', function() {
-		win.remove(overlay);
-	});
-	overlay.add(close);
+	/**
+	 * Note that the algorithm for the color and hue selection was created by me (Dawson Toth) for another project.
+	 * @param evt
+	 */
+	function pickerMove(evt) {
+		var percent, color;
+		switch (pickerMode) {
+			case 'size':
+				percent = 1 - Math.min(Math.max(evt.y - dragMin, 0) / dragMax, 1);
+				strokeWeight = Math.max(percent * paintMax, paintMin);
+				invokeListener();
+				penDot && penDot.applyProperties({ width: strokeWeight, height: strokeWeight });
+				penDot && (penDot.borderRadius = strokeWeight / 2);
+				penDotShadow && penDotShadow.applyProperties({ width: strokeWeight, height: strokeWeight });
+				penDotShadow && (penDotShadow.borderRadius = strokeWeight / 2);
+				paintView && paintView.strokeWidth(strokeWeight);
+				updateHandleTop('size', percent);
+				break;
+			case 'color':
+				var whiteRatio = 1 - Math.min(Math.max(evt.x - colorDragMin, 0) / (colorDragMax - colorDragMin), 1);
+				var blackRatio = Math.min(Math.max(evt.y - dragMin, 0) / dragMax, 1);
+				updateHandleTopLeft('color', whiteRatio, blackRatio);
+				updateStrokeColor(whiteRatio, blackRatio);
+				break;
+			case 'hue':
+				lastHueRatio = Math.min(Math.max(evt.y - dragMin, 0) / dragMax, 1);
+				updateHandleTop('hue', 1 - lastHueRatio);
+				lastHueColor = calculateHue(lastHueRatio);
+				colorFill.backgroundColor = lastHueColor;
+				updateStrokeColor(lastStrokeRatioX, lastStrokeRatioY);
+				invokeListener();
+				break;
+		}
+	}
 
-	win.add(overlay);
+	updateHandleTopLeft('color', lastStrokeRatioX, lastStrokeRatioY);
+	updateHandleTop('hue', 1 - lastHueRatio);
+
+	function updateStrokeColor(ratioX, ratioY) {
+		lastStrokeRatioX = ratioX;
+		lastStrokeRatioY = ratioY;
+		strokeColor = calculateColor(ratioX, ratioY, lastHueColor);
+		paintView && paintView.strokeColor(strokeColor);
+		penDot && (penDot.backgroundColor = strokeColor);
+		invokeListener();
+	}
+
+	function invokeListener() {
+		listener && listener(strokeWeight, strokeColor, lastHueColor, lastHueRatio, lastStrokeRatioX, lastStrokeRatioY);
+	}
+
+	colorPicker.addEventListener('touchstart', pickerStart);
+	colorPicker.addEventListener('touchmove', pickerMove);
+	colorPicker.addEventListener('touchend', pickerMove);
+	colorPicker.addEventListener('touchcancel', pickerMove);
+
+	colorPicker.add(handles.size);
+	colorPicker.add(handles.color);
+	colorPicker.add(handles.hue);
+
+	return colorPicker;
+};
+
+function calculateHue(ratio) {
+	// Figure out how far along they clicked
+	// Scale this to be an index in our mainColors array
+	var scaledRatio = ratio * (hues.length - 1);
+	// Floor it so that we have a real integer to work with as an index accessor
+	var f = Math.min(Math.max(Math.floor(scaledRatio) | 0, 0), hues.length - 2);
+	// Grab the fractional component of our original scaled ratio.
+	var percent = scaledRatio - f;
+	// We'll store our new faded color in this variable. But we have to put it together piece by piece first!
+	var newColor = 0;
+	// We will calculate the 3 parts of the color (red, green, and blue) in three different iterations below...
+	for (var i = 0; i < 3; i++) {
+		// Now, using the index we figured out earlier, calculate the faded value between the two pure colors
+		// There's two math equations going on here:
+		// 1) To fade between a and b by a ratio of r: a-(((a-b)*r)
+		// 2) Next, to take our 0-255 value to the proper component of a HEX color, perform a bitwise shift 16, 8,
+		//    or 0 digits
+		newColor += hues[f][i] - ((hues[f][i] - hues[(f + 1)][i]) * percent) << (2 - i) * 8;
+	}
+	// By this point, we figured out our color! As an integer... so let's turn it to its HEX value!
+	var color = newColor.toString(16);
+	// And then let's pad the left of it with 0s...
+	for (var j = color.length; j < 6; j++) {
+		color = '0' + color;
+	}
+	// That wasn't so bad, now was it? (I may have cried when I finished programming this. MAY HAVE.)
+	return '#' + color;
+}
+
+function calculateColor(whiteRatio, blackRatio, hue) {
+	// The algorithm we will use here is very similar to what we use below in the "hue" function, so I
+	// won't provide a step-by-step.
+	var base = hue.substring(1);
+	var splitColor = [];
+	if (base.length == 3) {
+		splitColor = [
+			parseInt(base[0] + base[0], 16),
+			parseInt(base[1] + base[1], 16),
+			parseInt(base[2] + base[2], 16)
+		];
+	}
+	else {
+		splitColor = [
+			parseInt(base[0] + base[1], 16),
+			parseInt(base[2] + base[3], 16),
+			parseInt(base[4] + base[5], 16)
+		];
+	}
+	// Apply the white ratio to it. This will fade the rgb components closer to white.
+	for (var i = 0; i < 3; i++) {
+		splitColor[i] = 255 - ((255 - splitColor[i]) * (1 - whiteRatio));
+	}
+	// Apply the black ratio, and merge it in to an actual integer.
+	var newColor = 0;
+	for (var j = 0; j < 3; j++) {
+		newColor += 0 - ((0 - splitColor[j]) * (1 - blackRatio)) << (2 - j) * 8;
+	}
+	// By this point, we figured out our color! As an integer... so let's turn it to its HEX value!
+	var color = newColor.toString(16);
+	// And then let's pad the left of it with 0s...
+	for (var k = color.length; k < 6; k++) {
+		color = '0' + color;
+	}
+	// Phew!
+	return '#' + color;
 }
