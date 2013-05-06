@@ -22,6 +22,7 @@ function init() {
 	E
 		.addEventListener('paint:save', save)
 		.addEventListener('paint:clear', clear)
+		.addEventListener('switchToLetter', clear)
 		.addEventListener('paint:swap-cleared', swapCleared)
 	;
 }
