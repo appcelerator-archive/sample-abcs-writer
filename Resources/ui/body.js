@@ -12,7 +12,8 @@ exports.addToView = addToView;
 function addToView(win) {
 
 	var container = Ti.UI.createView({
-		top: 82, right: 0, bottom: 0, left: 0
+		top: 40, right: 0, bottom: 0, left: 0,
+		zIndex: 0
 	});
 	win.add(container);
 

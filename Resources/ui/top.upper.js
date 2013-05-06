@@ -10,22 +10,19 @@ exports.addToView = addToView;
  */
 
 function addToView(win) {
-	win.add(Ti.UI.createView({
+	var bar = exports.lastView = Ti.UI.createScrollView({
+		backgroundImage: '/images/tile-dark.png',
 		top: 0, right: 0, left: 0,
 		height: 41,
-		backgroundImage: '/images/tile-dark.png'
-	}));
-	var bottomBar = Ti.UI.createScrollView({
-		top: 0, right: 0, left: 0,
-		height: 40,
 		contentWidth: 'auto',
 		scrollType: 'horizontal',
 		showHorizontalScrollIndicator: false,
-		horizontalBounce: true
+		horizontalBounce: true,
+		zIndex: 3
 	});
-	win.add(bottomBar);
+	win.add(bar);
 
-	bottomBar.addEventListener('click', clickLetter);
+	bar.addEventListener('click', clickLetter);
 
 	var letters = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
 		lastLetter = Ti.App.Properties.getString('lastLetter', ' ');
@@ -40,9 +37,9 @@ function addToView(win) {
 		if (Ti.Platform.osname != 'android') {
 			label.opacity = 0.5;
 		}
-		bottomBar.add(label);
+		bar.add(label);
 		if (letters[k] == lastLetter) {
-			bottomBar.scrollTo(k * 40, 0);
+			bar.scrollTo(k * 40, 0);
 			label.fireEvent('click', { source: label });
 		}
 	}

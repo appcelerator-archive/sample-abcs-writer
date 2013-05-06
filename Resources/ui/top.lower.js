@@ -1,5 +1,6 @@
 var ColorPicker = require('./colorPicker'),
 	PaintView = require('./paintView'),
+	U = require('lib/utils'),
 	A = require('lib/animations'),
 	E = require('lib/events'),
 	S = require('data/settings');
@@ -16,11 +17,12 @@ function addToView(win) {
 	/*
 	 Draw the top bar. This is where the user can choose size color and eraser mode, as well as saving and clearing.
 	 */
-	var topBar = Ti.UI.createView({
+	var bar = exports.lastView = Ti.UI.createView({
 		top: 40, right: 0, left: 0,
-		height: 41
+		height: 41,
+		zIndex: 3
 	});
-	win.add(topBar);
+	win.add(bar);
 
 	/*
 	 Create a save button. This will save the drawing to the user's photo gallery.
@@ -31,7 +33,7 @@ function addToView(win) {
 		left: 0, top: 0
 	});
 	save.addEventListener('click', E.curryFireEvent('paint:save'));
-	topBar.add(save);
+	bar.add(save);
 
 	/*
 	 Pen Stroke.
@@ -41,7 +43,8 @@ function addToView(win) {
 		width: 70, height: 41,
 		top: 0, left: 70
 	});
-	pen.addEventListener('click', function(evt) {
+	pen.addEventListener('click', clickPen);
+	function clickPen() {
 		var makeVisible = colorPicker.isVisible = !colorPicker.isVisible;
 		colorPicker.touchEnabled = makeVisible;
 		A.fade(colorPicker, makeVisible ? 1 : 0);
@@ -49,7 +52,8 @@ function addToView(win) {
 		if (makeVisible && PaintView.eraseMode()) {
 			toggleEraser();
 		}
-	});
+	}
+
 	var penStroke = Ti.UI.createView({
 		width: S.defaultPenWidth(), height: S.defaultPenWidth(),
 		borderRadius: S.defaultPenWidth() / 2,
@@ -74,7 +78,7 @@ function addToView(win) {
 	pen.add(penHighlight);
 	pen.add(penStrokeShadow);
 	pen.add(penStroke);
-	topBar.add(pen);
+	bar.add(pen);
 
 	/*
 	 Eraser.
@@ -93,7 +97,7 @@ function addToView(win) {
 		touchEnabled: false
 	});
 	eraser.add(eraserHighlight);
-	topBar.add(eraser);
+	bar.add(eraser);
 
 	var flashEraserIntervalID, stopFlash;
 
@@ -122,6 +126,42 @@ function addToView(win) {
 	}
 
 	/*
+	 Collapse / expand.
+	 */
+	var arrowUp = Ti.UI.createButton({
+		backgroundImage: '/images/buttons/arrow-up.png',
+		width: 40, height: 40,
+		top: 0
+	});
+	arrowUp.addEventListener('click', collapse);
+	bar.add(arrowUp);
+	var arrowDown = Ti.UI.createButton({
+		transform: Ti.UI.create2DMatrix().translate(0, -40),
+		backgroundImage: '/images/buttons/arrow-down.png',
+		width: 40, height: 40,
+		top: 0,
+		opacity: 0,
+		zIndex: 2
+	});
+	arrowDown.addEventListener('click', expand);
+	win.add(arrowDown);
+
+	function collapse() {
+		if (colorPicker.isVisible) {
+			clickPen();
+		}
+		slide(require('ui/top.upper').lastView, -80, 0);
+		slide(bar, -80, 0);
+		slide(arrowDown, 0, 1);
+	}
+
+	function expand() {
+		slide(require('ui/top.upper').lastView, 0, 1);
+		slide(bar, 0, 1);
+		slide(arrowDown, -40, 0);
+	}
+
+	/*
 	 Create a clear button.
 	 */
 	var clear = Ti.UI.createButton({
@@ -130,7 +170,7 @@ function addToView(win) {
 		right: 0, top: 0
 	});
 	clear.addEventListener('click', doClear);
-	topBar.add(clear);
+	bar.add(clear);
 
 	function doClear() {
 		if (clear.undoMode) {
@@ -146,8 +186,17 @@ function addToView(win) {
 		clear.undoMode = false;
 	});
 
-	var colorPicker = ColorPicker.createView({
+	var colorPicker = exports.colorPicker = ColorPicker.createView({
 		top: 75, left: -16
 	}, PaintView, penStroke, penStrokeShadow);
 	win.add(colorPicker);
+}
+
+function slide(view, where, opacity) {
+	view.animate(Ti.UI.createAnimation({
+		opacity: opacity,
+		transform: Ti.UI.create2DMatrix().translate(0, where),
+		curve: U.ios ? Ti.UI.iOS.ANIMATION_CURVE_EASE_IN_OUT : undefined,
+		duration: 300
+	}));
 }

@@ -33,7 +33,7 @@ exports.createView = function(args, paintView, penDot, penDotShadow, listener) {
 		width: 353, height: 259,
 		touchEnabled: false,
 		opacity: 0,
-		zIndex: 2
+		zIndex: 3
 	}));
 	var colorFill = Ti.UI.createView({
 		backgroundColor: defaultHueColor,

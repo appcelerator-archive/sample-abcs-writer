@@ -116,9 +116,10 @@ function swapCleared() {
 
 function createView() {
 	var container = Ti.UI.createScrollView({
-		top: 82, right: 0, bottom: 0, left: 0,
+		top: 0, right: 0, bottom: 0, left: 0,
 		verticalBounce: false,
-		disableBounce: true
+		disableBounce: true,
+		zIndex: 1
 	});
 	var view = Paint.createPaintView({
 		strokeColor: S.defaultPenColor(), strokeWidth: S.defaultPenWidth(),
