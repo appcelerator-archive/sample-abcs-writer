@@ -48,7 +48,7 @@ function addToView(win) {
 
 	// middle
 	guides.add(Ti.UI.createImageView({
-		image: '/Images/PinkLine@2x.png',
+		image: '/images/pinkLine.png',
 		width: 1024, height: 2,
 		bottom: guideSize.barHeight / 2,
 		hires: true
@@ -80,7 +80,7 @@ function addToView(win) {
 
 	function switchToLetter(letter) {
 		guides.visible = letter != ' ';
-		letterDisplay.backgroundImage = letter != ' ' ? '/Images/Letters-72/' + letter.toLowerCase() + '.png' : null;
+		letterDisplay.backgroundImage = letter != ' ' ? '/images/letters-72/' + letter.toLowerCase() + '.png' : null;
 		Ti.App.Properties.setString('lastLetter', letter);
 	}
 }

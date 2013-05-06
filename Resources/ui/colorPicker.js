@@ -42,26 +42,26 @@ exports.createView = function(args, paintView, penDot, penDotShadow, listener) {
 	});
 	colorPicker.add(colorFill);
 	colorPicker.add(Ti.UI.createView({
-		backgroundImage: '/Images/colorPicker.png'
+		backgroundImage: '/images/colorPicker.png'
 	}));
 
 	var handles = {
 		size: Ti.UI.createView({
-			backgroundImage: '/Images/handle.png',
+			backgroundImage: '/images/handle.png',
 			width: 25, height: 25,
 			left: 25,
 			top: 0,
 			touchEnabled: false
 		}),
 		color: Ti.UI.createView({
-			backgroundImage: '/Images/handle.png',
+			backgroundImage: '/images/handle.png',
 			width: 25, height: 25,
 			left: 150,
 			top: 0,
 			touchEnabled: false
 		}),
 		hue: Ti.UI.createView({
-			backgroundImage: '/Images/handle.png',
+			backgroundImage: '/images/handle.png',
 			width: 25, height: 25,
 			left: 305,
 			top: 0,

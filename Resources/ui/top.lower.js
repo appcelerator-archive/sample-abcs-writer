@@ -13,23 +13,22 @@ exports.addToView = addToView;
  Implementation.
  */
 function addToView(win) {
-	/**
-	 * Draw the top bar. This is where the user can choose size color and eraser mode, as well as saving and clearing.
+	/*
+	 Draw the top bar. This is where the user can choose size color and eraser mode, as well as saving and clearing.
 	 */
 	var topBar = Ti.UI.createView({
-		top: 38, right: 0, left: 0,
-		height: 44,
-		backgroundImage: '/Images/Tile-Top.png'
+		top: 40, right: 0, left: 0,
+		height: 41
 	});
 	win.add(topBar);
 
-	/**
-	 * Create a save button. This will save the drawing to the user's photo gallery.
+	/*
+	 Create a save button. This will save the drawing to the user's photo gallery.
 	 */
 	var save = Ti.UI.createButton({
-		width: 56, height: 31,
-		left: 5, top: 7,
-		backgroundImage: '/Images/Buttons/Save.png'
+		backgroundImage: '/images/buttons/save.png',
+		width: 70, height: 41,
+		left: 0, top: 0
 	});
 	save.addEventListener('click', E.curryFireEvent('paint:save'));
 	topBar.add(save);
@@ -38,9 +37,9 @@ function addToView(win) {
 	 Pen Stroke.
 	 */
 	var pen = Ti.UI.createView({
-		width: 75,
-		left: 66,
-		top: 0
+		backgroundImage: '/images/buttons/pen.png',
+		width: 70, height: 41,
+		top: 0, left: 70
 	});
 	pen.addEventListener('click', function(evt) {
 		var makeVisible = colorPicker.isVisible = !colorPicker.isVisible;
@@ -59,14 +58,16 @@ function addToView(win) {
 	});
 	var penStrokeShadow = Ti.UI.createView({
 		width: S.defaultPenWidth(), height: S.defaultPenWidth(),
-		center: { x: 37, y: 23 },
+		center: { x: pen.width / 2, y: pen.height / 2 + 1 },
 		borderRadius: S.defaultPenWidth() / 2,
-		backgroundColor: '#000',
+		backgroundColor: '#fff',
 		opacity: 0.75,
 		touchEnabled: false
 	});
 	var penHighlight = Ti.UI.createView({
-		backgroundImage: '/Images/Tile-Bottom-Off.png',
+		backgroundColor: 'rgba(0, 0, 0, 0.6)',
+		top: -10, right: 1, bottom: 1, left: -10,
+		borderRadius: 6,
 		opacity: 0,
 		touchEnabled: false
 	});
@@ -79,22 +80,19 @@ function addToView(win) {
 	 Eraser.
 	 */
 	var eraser = Ti.UI.createView({
-		width: 73,
-		left: 141,
-		top: 0
+		backgroundImage: '/images/buttons/eraser.png',
+		width: 70, height: 41,
+		top: 0, right: 70
 	});
 	eraser.addEventListener('click', toggleEraser);
 	var eraserHighlight = Ti.UI.createView({
-		backgroundImage: '/Images/Tile-Bottom-Off.png',
+		backgroundColor: 'rgba(0, 0, 0, 0.6)',
+		top: -10, right: -10, bottom: 1, left: 1,
+		borderRadius: 6,
 		opacity: 0,
 		touchEnabled: false
 	});
 	eraser.add(eraserHighlight);
-	eraser.add(Ti.UI.createView({
-		backgroundImage: '/Images/eraser.png',
-		width: 38, height: 38,
-		touchEnabled: false
-	}));
 	topBar.add(eraser);
 
 	var flashEraserIntervalID, stopFlash;
@@ -123,14 +121,13 @@ function addToView(win) {
 		}
 	}
 
-	/**
-	 * Create a clear button.
+	/*
+	 Create a clear button.
 	 */
 	var clear = Ti.UI.createButton({
-		width: 56, height: 31,
-		right: 5, top: 7,
-		backgroundImage: '/Images/Buttons/Clear.png',
-		opacity: 0.3
+		backgroundImage: '/images/buttons/clear.png',
+		width: 70, height: 41,
+		right: 0, top: 0
 	});
 	clear.addEventListener('click', doClear);
 	topBar.add(clear);
@@ -141,19 +138,16 @@ function addToView(win) {
 		}
 		else {
 			E.fireEvent('paint:clear');
-			clear.backgroundImage = '/Images/Buttons/Undo.png';
 			clear.undoMode = true;
 		}
 	}
 
 	E.addEventListener('paint:first-draw', function() {
-		clear.backgroundImage = '/Images/Buttons/Clear.png';
 		clear.undoMode = false;
-		clear.opacity = 1;
 	});
 
 	var colorPicker = ColorPicker.createView({
-		top: 76
+		top: 75, left: -16
 	}, PaintView, penStroke, penStrokeShadow);
 	win.add(colorPicker);
 }

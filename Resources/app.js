@@ -3,7 +3,7 @@
  */
 var U = require('lib/utils');
 
-var win = Ti.UI.createWindow({ backgroundImage: U.ipad ? '/Images/Background-72.jpg' : '/Images/Background.jpg' });
+var win = Ti.UI.createWindow({ backgroundImage: U.ipad ? '/images/background-72.jpg' : '/images/background.jpg' });
 
 require('ui/body').addToView(win);
 require('ui/paintView').init();
