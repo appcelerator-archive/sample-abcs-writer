@@ -175,14 +175,20 @@ function addToView(win) {
 	function doClear() {
 		if (clear.undoMode) {
 			E.fireEvent('paint:swap-cleared');
+			clear.undoMode = false;
+			clear.backgroundImage = '/images/buttons/clear.png';
 		}
 		else {
 			E.fireEvent('paint:clear');
 			clear.undoMode = true;
+			clear.backgroundImage = '/images/buttons/undo.png';
 		}
 	}
 
 	E.addEventListener('paint:first-draw', function() {
+		if (clear.undoMode) {
+			clear.backgroundImage = '/images/buttons/clear.png';
+		}
 		clear.undoMode = false;
 	});
 
