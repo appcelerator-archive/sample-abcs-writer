@@ -32,7 +32,7 @@ function addToView(win) {
 		width: 70, height: 41,
 		left: 0, top: 0
 	});
-	save.addEventListener('click', E.curryFireEvent('paint:save'));
+	save.addEventListener('singletap', E.curryFireEvent('paint:save'));
 	bar.add(save);
 
 	/*
@@ -43,7 +43,7 @@ function addToView(win) {
 		width: 70, height: 41,
 		top: 0, left: 70
 	});
-	pen.addEventListener('click', clickPen);
+	pen.addEventListener('singletap', clickPen);
 	function clickPen() {
 		var makeVisible = colorPicker.isVisible = !colorPicker.isVisible;
 		colorPicker.touchEnabled = makeVisible;
@@ -88,7 +88,7 @@ function addToView(win) {
 		width: 70, height: 41,
 		top: 0, right: 70
 	});
-	eraser.addEventListener('click', toggleEraser);
+	eraser.addEventListener('singletap', toggleEraser);
 	var eraserHighlight = Ti.UI.createView({
 		backgroundColor: 'rgba(0, 0, 0, 0.6)',
 		top: -10, right: -10, bottom: 1, left: 1,
@@ -133,7 +133,7 @@ function addToView(win) {
 		width: 40, height: 40,
 		top: 0
 	});
-	arrowUp.addEventListener('click', collapse);
+	arrowUp.addEventListener('singletap', collapse);
 	bar.add(arrowUp);
 	var arrowDown = Ti.UI.createButton({
 		transform: Ti.UI.create2DMatrix().translate(0, -40),
@@ -143,7 +143,7 @@ function addToView(win) {
 		opacity: 0,
 		zIndex: 2
 	});
-	arrowDown.addEventListener('click', expand);
+	arrowDown.addEventListener('singletap', expand);
 	win.add(arrowDown);
 
 	function collapse() {
@@ -169,7 +169,7 @@ function addToView(win) {
 		width: 70, height: 41,
 		right: 0, top: 0
 	});
-	clear.addEventListener('click', doClear);
+	clear.addEventListener('singletap', doClear);
 	bar.add(clear);
 
 	function doClear() {

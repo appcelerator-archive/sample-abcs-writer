@@ -22,7 +22,7 @@ function addToView(win) {
 	});
 	win.add(bar);
 
-	bar.addEventListener('click', clickLetter);
+	bar.addEventListener('singletap', clickLetter);
 
 	var letters = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
 		lastLetter = Ti.App.Properties.getString('lastLetter', ' ');
@@ -40,7 +40,7 @@ function addToView(win) {
 		bar.add(label);
 		if (letters[k] == lastLetter) {
 			bar.scrollTo(k * 40, 0);
-			label.fireEvent('click', { source: label });
+			label.fireEvent('singletap', { source: label });
 		}
 	}
 }
