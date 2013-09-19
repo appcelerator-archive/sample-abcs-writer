@@ -81,7 +81,7 @@ function save() {
 			var imageFile = Ti.Filesystem.getFile('file:///sdcard/').exists()
 				? Ti.Filesystem.getFile('file:///sdcard/', fileName)
 				: Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, fileName);
-			imageFile.write(paintWrapper.view.toImage().media);
+			imageFile.write(paintWrapper.container.toImage().media);
 			Ti.Media.Android.scanMediaFiles([ imageFile.nativePath ], null, saveSuccess);
 		}
 		catch (err) {
@@ -89,7 +89,7 @@ function save() {
 		}
 	}
 	else {
-		Ti.Media.saveToPhotoGallery(paintWrapper.view.toImage(null, true), {
+		Ti.Media.saveToPhotoGallery(paintWrapper.container.toImage(null, true), {
 			success: saveSuccess,
 			failure: saveFailure
 		});
@@ -117,12 +117,16 @@ function swapCleared() {
 
 function createView() {
 	var container = Ti.UI.createScrollView({
-		top: 0, right: 0, bottom: 0, left: 0,
-		verticalBounce: false,
+		top: 0, left: 0,
+		contentHeight: '1', contentWidth: '1',
+		verticalBounce: false, horizontalBounce: false,
 		disableBounce: true,
+		scrollingEnabled: false,
 		zIndex: 1
 	});
+	var maxDimension = Math.max(Ti.Platform.displayCaps.platformHeight, Ti.Platform.displayCaps.platformWidth);
 	var view = Paint.createPaintView({
+		width: maxDimension, height: maxDimension,
 		strokeColor: S.defaultPenColor(), strokeWidth: S.defaultPenWidth(),
 		eraseMode: false
 	});
