@@ -1,6 +1,7 @@
 var Paint = require('ti.paint'),
 	E = require('lib/events'),
-	S = require('data/settings');
+	S = require('data/settings'),
+	T = require('ui/toast');
 
 var win, paintWrapper, clearedPaintWrapper;
 
@@ -146,10 +147,7 @@ function paintLayerTouchMoveListener() {
 }
 
 function saveSuccess() {
-	Ti.UI.createAlertDialog({
-		title: 'Success',
-		message: 'Your drawing was saved to the photo gallery.'
-	}).show();
+	T.show('Your drawing was saved to the photo gallery!', win, 2000);
 }
 
 function saveFailure(err) {
