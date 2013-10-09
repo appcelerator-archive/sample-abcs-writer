@@ -3,7 +3,11 @@ var Paint = require('ti.paint'),
 	S = require('data/settings'),
 	T = require('ui/toast');
 
-var win, paintWrapper, clearedPaintWrapper;
+var win,
+	didPaint = false,
+	paintWrapper,
+	clearedPaintWrapper,
+	paintsByLetter = {};
 
 /*
  Public API.
@@ -23,15 +27,14 @@ function init() {
 	E
 		.addEventListener('paint:save', save)
 		.addEventListener('paint:clear', clear)
-		.addEventListener('switchToLetter', clear)
 		.addEventListener('paint:swap-cleared', swapCleared)
+		.addEventListener('switchToLetter', switchToLetter)
 	;
 }
 
 function addToView(_win) {
 	win = _win;
-	paintWrapper.container.addEventListener('touchmove', paintLayerTouchMoveListener);
-	win.add(paintWrapper.container);
+	bind();
 }
 
 function eraseMode(val) {
@@ -101,9 +104,7 @@ function clear() {
 	win.remove(paintWrapper.container);
 	clearedPaintWrapper = paintWrapper;
 	paintWrapper = createView();
-	paintWrapper.container.addEventListener('touchmove', paintLayerTouchMoveListener);
-	persistPaintProperties(clearedPaintWrapper.view, paintWrapper.view);
-	win.add(paintWrapper.container);
+	bind();
 }
 
 function swapCleared() {
@@ -111,8 +112,32 @@ function swapCleared() {
 	var temp = paintWrapper;
 	paintWrapper = clearedPaintWrapper;
 	clearedPaintWrapper = temp;
+	bind();
+}
+
+function switchToLetter(letter, oldLetter) {
+	if (!paintWrapper) {
+		return;
+	}
+	win.remove(paintWrapper.container);
+	paintsByLetter[oldLetter] = paintWrapper;
+	clearedPaintWrapper = null;
+	didPaint = false;
+	if (paintsByLetter[letter]) {
+		paintWrapper = paintsByLetter[letter];
+	}
+	else {
+		paintWrapper = createView();
+	}
+	bind();
+}
+
+function bind() {
+	didPaint = false;
 	paintWrapper.container.addEventListener('touchmove', paintLayerTouchMoveListener);
-	persistPaintProperties(clearedPaintWrapper.view, paintWrapper.view);
+	if (clearedPaintWrapper) {
+		persistPaintProperties(clearedPaintWrapper.view, paintWrapper.view);
+	}
 	win.add(paintWrapper.container);
 }
 
@@ -142,6 +167,7 @@ function persistPaintProperties(from, to) {
 }
 
 function paintLayerTouchMoveListener() {
+	didPaint = true;
 	paintWrapper.container.removeEventListener('touchmove', paintLayerTouchMoveListener);
 	E.fireEvent('paint:first-draw');
 }

@@ -173,16 +173,24 @@ function addToView(win) {
 	bar.add(clear);
 
 	function doClear() {
+
 		if (clear.undoMode) {
 			E.fireEvent('paint:swap-cleared');
-			clear.undoMode = false;
-			clear.backgroundImage = '/images/buttons/clear.png';
+			syncUndoMode(false);
 		}
 		else {
 			E.fireEvent('paint:clear');
-			clear.undoMode = true;
-			clear.backgroundImage = '/images/buttons/undo.png';
+			syncUndoMode(true);
 		}
+	}
+
+	E.addEventListener('switchToLetter', function() {
+		syncUndoMode(false);
+	});
+
+	function syncUndoMode(on) {
+		clear.undoMode = on;
+		clear.backgroundImage = '/images/buttons/' + (on ? 'undo' : 'clear') + '.png';
 	}
 
 	E.addEventListener('paint:first-draw', function() {

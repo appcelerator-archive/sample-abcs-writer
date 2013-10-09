@@ -48,16 +48,18 @@ function addToView(win) {
 var lastLabel = null;
 
 function clickLetter(evt) {
+	var lastLetter;
 	if (lastLabel != null) {
 		if (Ti.Platform.osname != 'android') {
 			lastLabel.opacity = 0.5;
 		}
 		lastLabel.backgroundImage = null;
+		lastLetter = lastLabel.text;
 	}
 	lastLabel = evt.source;
 	if (Ti.Platform.osname != 'android') {
 		lastLabel.opacity = 1;
 	}
 	lastLabel.backgroundImage = '/images/selectedLetter.png';
-	E.fireEvent('switchToLetter', lastLabel.text);
+	E.fireEvent('switchToLetter', lastLabel.text, lastLetter);
 }
