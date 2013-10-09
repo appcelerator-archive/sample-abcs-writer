@@ -19,17 +19,19 @@ exports.clearEventListeners = function() {
 
 exports.fireEvent = function(name, data) {
 	if (listeners[name]) {
+		var args = Array.prototype.slice.call(arguments, 1);
 		for (var l in listeners[name]) {
-			listeners[name][l](data);
+			listeners[name][l].apply(this, args);
 		}
 	}
 	return exports;
 };
 
 exports.curryFireEvent = function(name, data) {
+	var args = arguments;
 	return function() {
-		return exports.fireEvent(name, data);
-	}
+		return exports.fireEvent.apply(this, args);
+	};
 };
 
 exports.removeEventListener = function(name, func) {
