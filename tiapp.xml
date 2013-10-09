@@ -6,8 +6,9 @@
         <target device="android">true</target>
     </deployment-targets>
     <id>com.dawson.abcswriter</id>
-    <name>ABC's Writer</name>
+    <name>ABCs Writer</name>
     <version>1.2.0</version>
+    <sdk-version>3.1.3.GA</sdk-version>
     <publisher>Appcelerator</publisher>
     <url>http://www.appcelerator.com</url>
     <description>Trace letters with this interactive drawing app.</description>
